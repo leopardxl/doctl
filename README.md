@@ -2,12 +2,13 @@
 
 ###### This project is a simple script to upload a set of files to a digital ocean.
 
+```sh
 go build
 
 export $(cat .env | xargs)
 
-**doctl** -a put -b bucket SOURCE [SOURCE...]
-
+doctl -a put -b bucket SOURCE [SOURCE...]
+```
 
 Status: **Abandoned**
 
