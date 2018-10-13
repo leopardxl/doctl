@@ -23,6 +23,7 @@ func main() {
 	// Read user input
 	action := flag.String("a", "", `Type of action, "get" or "put"`)
 	bucketName := flag.String("b", "", "Name of the destination bucket") //Pointer to bucketName
+	debug := flag.Bool("d", false, "debug")
 
 	flag.Parse()
 	files := flag.Args()
@@ -38,36 +39,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//List all spaces. Digtal Ocean spaces are S3 buckets
-	spaces, err := client.ListBuckets()
-	if err != nil {
-		log.Fatal(err)
-	}
-	// objectName := "fp.py"
-	// filePath := "/home/kemmanuel/projects/tmp/fp.py"
-	// contentType := doctl.MimeType(filePath)
-	for _, space := range spaces {
-
-		if space.Name == spaceName {
-			fmt.Printf("Space %s exists\n", spaceName)
-			//fmt.Printf("checking if files already exist")
-			//fmt.Printf("uploading unique files")
-
+	if *debug {
+		//List all spaces. Digtal Ocean spaces are S3 buckets
+		spaces, err := client.ListBuckets()
+		if err != nil {
+			log.Fatal(err)
 		}
-		fmt.Println(space.Name)
-	}
-	// List all buckets
-	buckets, err := client.ListBuckets()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("Listing Buckets")
-	for _, bucket := range buckets {
-		fmt.Println(bucket)
-	}
 
-	prefixTest(client, spaceName, "dl")
+		for _, space := range spaces {
+			if space.Name == spaceName {
+				fmt.Printf("Space %s exists\n", spaceName)
+			}
+			fmt.Println(space.Name)
+		}
+	}
 
 	//Do the desired action
 	switch *action {
@@ -95,22 +80,4 @@ func validatePaths(paths []string) []string {
 
 	}
 	return validPaths
-}
-
-func prefixTest(client *minio.Client, bucket, prefix string) {
-	// Create a done channel to control 'ListObjectsV2' go routine.
-	doneCh := make(chan struct{})
-
-	// Indicate to our routine to exit cleanly upon return.
-	defer close(doneCh)
-
-	isRecursive := true
-	objectCh := client.ListObjectsV2(bucket, prefix, isRecursive, doneCh)
-	for object := range objectCh {
-		if object.Err != nil {
-			fmt.Println(object.Err)
-			return
-		}
-		fmt.Println(object)
-	}
 }
