@@ -6,10 +6,10 @@ go build
 
 export $(cat .env | xargs)
 
-**doctl -a put -b bucket SOURCE [SOURCE...]
+**doctl** -a put -b bucket SOURCE [SOURCE...]
 
 
-Status: **Abandoned
+Status: **Abandoned**
 
 The desired functionality at this time is implemented by the MinIO client.
 
